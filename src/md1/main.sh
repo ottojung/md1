@@ -62,9 +62,13 @@ do
 		exit 0
 	else
 		echo "WARN: Failed to fetch with '$SCRIPT_FULLPATH'." 1>&2
+		rm -rf "$DEST"
 		continue
 	fi
 done
 
-echo "ERROR: Failed to fetch with any available scripts." 1>&2
-exit 1
+if ! test -d "$DEST"
+then
+	echo "ERROR: Failed to fetch with any available scripts." 1>&2
+	exit 1
+fi
