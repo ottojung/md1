@@ -39,6 +39,12 @@ fi
 cat -- "$CONFIGURATION" | while IFS= read LINE
 do
 	SCRIPT="$(echo "$LINE" | awk -F ',' '{ print $1 }')"
+	if ! test -f "$SCRIPT"
+	then
+		echo "WARN: Download script at '$SCRIPT' does not exist." 1>&2
+		continue
+	fi
+
 	if "$SCRIPT" "$ID" "$DEST"
 	then
 		exit 0
