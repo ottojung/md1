@@ -22,34 +22,46 @@ then
 	exit 1
 fi
 
-CONFIGURATION="$HOME/.config/miyka/md1.csv"
-
-if ! test -f "$CONFIGURATION"
+if test -z "$MD1_CONFIGURATION"
 then
-	echo "ERROR: Configuration file at '$CONFIGURATION' does not exist." 1>&2
+	MD1_CONFIGURATION="$HOME/.config/miyka/md1.csv"
+fi
+
+if ! test -f "$MD1_CONFIGURATION"
+then
+	echo "ERROR: Configuration file at '$MD1_CONFIGURATION' does not exist." 1>&2
 	exit 1
 fi
 
-if test $(cat -- "$CONFIGURATION" | wc -l) = 0
+if test $(cat -- "$MD1_CONFIGURATION" | wc -l) = 0
 then
-	echo "ERROR: no downloaders defined in '$CONFIGURATION'." 1>&2
+	echo "ERROR: no downloaders defined in '$MD1_CONFIGURATION'." 1>&2
 	exit 1
 fi
 
-cat -- "$CONFIGURATION" | while IFS= read LINE
+cat -- "$MD1_CONFIGURATION" | while IFS= read LINE
 do
 	SCRIPT="$(echo "$LINE" | awk -F ',' '{ print $1 }')"
-	if ! test -f "$SCRIPT"
+	case "$SCRIPT" in
+		/*)
+			SCRIPT_FULLPATH="$SCRIPT"
+			;;
+		*)
+			SCRIPT_FULLPATH="${MD1_CONFIGURATION%/*}/$SCRIPT"
+			;;
+	esac
+
+	if ! test -f "$SCRIPT_FULLPATH"
 	then
-		echo "WARN: Download script at '$SCRIPT' does not exist." 1>&2
+		echo "WARN: Download script at '$SCRIPT_FULLPATH' does not exist." 1>&2
 		continue
 	fi
 
-	if "$SCRIPT" "$ID" "$DEST"
+	if "$SCRIPT_FULLPATH" "$ID" "$DEST"
 	then
 		exit 0
 	else
-		echo "WARN: Failed to fetch with '$SCRIPT'." 1>&2
+		echo "WARN: Failed to fetch with '$SCRIPT_FULLPATH'." 1>&2
 		continue
 	fi
 done
