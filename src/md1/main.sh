@@ -30,6 +30,12 @@ then
 	exit 1
 fi
 
+if test $(cat -- "$CONFIGURATION" | wc -l) = 0
+then
+	echo "ERROR: no downloaders defined in '$CONFIGURATION'." 1>&2
+	exit 1
+fi
+
 cat -- "$CONFIGURATION" | while IFS= read LINE
 do
 	SCRIPT="$(echo "$LINE" | awk -F ',' '{ print $1 }')"
