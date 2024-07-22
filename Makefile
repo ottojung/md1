@@ -1,6 +1,6 @@
 
 PREFIX = /usr/local
-PREFIXBIN = /usr/local/bin
+PREFIXBIN = $(PREFIX)/bin
 
 all: install
 
