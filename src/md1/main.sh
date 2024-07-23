@@ -62,7 +62,7 @@ do
 		exit 0
 	else
 		echo "WARN: Failed to fetch with '$SCRIPT_FULLPATH'." 1>&2
-		rm -rf "$DEST"
+		rm -rf -- "$DEST"
 		continue
 	fi
 done
